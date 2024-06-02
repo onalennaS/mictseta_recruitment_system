@@ -56,7 +56,7 @@ def sign_up(request):
 				new_user.save()
 				return JsonResponse({'message':f'User profile for {new_user.username} is created successfuly', 'status':'success'}, status=201)
 		else:
-			return JsonResponse({'errors': forms.errors, 'status': 'error'}, status=403)
+			return JsonResponse({'errors': form.errors, 'status': 'error'}, status=403)
 	return render(request, "signup.html")
 
 

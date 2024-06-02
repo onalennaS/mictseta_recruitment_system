@@ -32,10 +32,28 @@ class UserSignInForm(forms.Form):
 
 
 class UserSignUpForm(forms.Form):
+	username = forms.CharField(max_length=150)
+	email = forms.CharField(max_length=150)
+	first_name = forms.CharField(max_length=150)
+	last_name = forms.CharField(max_length=150)
+	password = forms.CharField(max_length=128)
+
+	def validate_names(self,name):
+	    pattern = r"[~`+!@#$%^&*()=\-/\*\\|}{\[\];'\?.,]"
+	    matches = re.findall(pattern, name)
+	    if matches:
+	        raise forms.ValidationError("No special characters allowed")
+	    if len(name) < 3:
+	        raise forms.ValidationError(f"Name:{name} is too short")
+	    try:
+	        str(name)
+	    except Exception as e:
+	        raise forms.ValidationError(e)
+	    return name
 
 	def clean_first_name(self):
 		first_name = self.cleaned_data.get('first_name')
-		return validate_names(first_name)
+		return self.validate_names(first_name)
 
 	def clean_last_name(self):
 		last_name = self.cleaned_data.get('last_name')
@@ -45,7 +63,7 @@ class UserSignUpForm(forms.Form):
 		username = self.cleaned_data.get('username')
 		exist = User.objects.filter(username=username).exists()
 		if exist:
-			raise forms.ValidationError("username is already taken")
+			raise forms.ValidationError(f"Username:{username} is already taken")
 		return self.validate_names(username)
 
 	def clean_email(self):
@@ -53,13 +71,13 @@ class UserSignUpForm(forms.Form):
 		if ' ' in email :
 			raise forms.ValidationError("Spaces not allowed in email")
 		if not validate_email(email):
-			raise forms.ValidationError("Email in Invalid")
+			raise forms.ValidationError(f"Email: {email} in Invalid")
 		new_email = email.split('@')
 		if len(new_email[0]) < 3:
 			raise forms.ValidationError("Email length is Invalid") 
 		exist = User.objects.filter(email=email).exists()
 		if exist:
-			raise forms.ValidationError("Email is already taken")
+			raise forms.ValidationError(f"Email: {email} is already taken")
 		return email
 
 	def clean_password(self):
@@ -73,15 +91,4 @@ class UserSignUpForm(forms.Form):
 			raise forms.ValidationError("Password Does not Match")
 		return password
 
-	def validate_names(name):
-	    pattern = r"[~`+!@#$%^&*()=\-/\*\\|}{\[\];'\?.,]"
-	    matches = re.findall(pattern, name)
-	    if matches:
-	        raise forms.ValidationError("No special characters allowed")
-	    if len(name) < 3:
-	        raise forms.ValidationError(f"Name:{name} is too short")
-	    try:
-	        str(name)
-	    except Exception as e:
-	        raise forms.ValidationError(e)
-	    return name
+	
