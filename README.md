@@ -80,7 +80,7 @@ The Server willl return a respones data in json formart
 ```sh
 	{
 		"errors" : {
-					"field_name": ['error message']
+					"field_name": ['error message'],
 				},
 		"status" : "error"
 	}
@@ -88,8 +88,8 @@ The Server willl return a respones data in json formart
 - if the request is successful, the server will return the following structure
 ```ssh
 	{
-		"message":" success message here" , 
+		"message" : " success message here" , 
 
-		"status":"success"
+		"status" : "success"
 	}
 ```

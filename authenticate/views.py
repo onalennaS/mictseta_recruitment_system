@@ -37,7 +37,10 @@ def sign_in(request):
 @csrf_exempt
 def sign_up(request):
 	if request.method == 'POST':
-		json_data = json.loads(request.body)
+		try:
+			json_data = json.loads(request.body)
+		except Exception :
+			return JsonResponse({'errors':'Supply a json oject: check documentation for more info ', 'status':'error'})
 		data = {
 		'username' : json_data.get('username'),
 		'first_name' : json_data.get('first_name'),
